@@ -1,15 +1,13 @@
 package de.htwg
 
-import scala.collection.mutable
-
 import akka.actor.Actor
 import akka.actor.Props
 import de.htwg.model.SelectPosition
 import de.htwg.model.Player
 import de.htwg.model.GridPosition
-import de.htwg.GameControllerActor.SelectPositionAck
 import de.htwg.GameControllerActor.GetGrid
 import de.htwg.GameControllerActor.GetGridAck
+import de.htwg.GameControllerActor.SelectPositionAck
 import de.htwg.GameControllerActor.SelectPositionReturnCode.NotThisPlayersTurn
 import de.htwg.GameControllerActor.SelectPositionReturnCode.PositionAlreadySelected
 import de.htwg.GameControllerActor.SelectPositionReturnCode.PositionSet
@@ -20,17 +18,16 @@ class GameControllerActor private(startingPlayer: Player) extends Actor {
 
   var current: Player = startingPlayer
   var finished: Boolean = false
-
-  val gameField: mutable.Map[GridPosition, Player] = mutable.Map()
+  var gameField: Map[GridPosition, Player] = Map.empty
 
   override def receive: Receive = {
-    case GetGrid => sender ! GetGridAck(gameField.toMap)
+    case GetGrid => sender ! GetGridAck(gameField)
 
-    case SelectPosition(p, pos) if p != current => sender ! SelectPositionAck(p, pos, NotThisPlayersTurn)
-    case SelectPosition(p, pos) if gameField.contains(pos) => sender ! SelectPositionAck(p, pos, PositionAlreadySelected)
-    case SelectPosition(p, pos) if finished => sender ! SelectPositionAck(p, pos, GameAlreadyFinished)
+    case SelectPosition(p, pos) if p != current => sender ! SelectPositionAck(p, pos, gameField, NotThisPlayersTurn)
+    case SelectPosition(p, pos) if gameField.contains(pos) => sender ! SelectPositionAck(p, pos, gameField, PositionAlreadySelected)
+    case SelectPosition(p, pos) if finished => sender ! SelectPositionAck(p, pos, gameField, GameAlreadyFinished)
     case SelectPosition(p, pos) =>
-      gameField.put(pos, p)
+      gameField += (pos -> p)
       val ret = if (checkGameWon(pos, p)) {
         finished = true
         GameWon
@@ -39,7 +36,7 @@ class GameControllerActor private(startingPlayer: Player) extends Actor {
         PositionSet
       }
 
-      sender ! SelectPositionAck(p, pos, ret)
+      sender ! SelectPositionAck(p, pos, gameField, ret)
   }
 
   private def checkGameWon(last: GridPosition, p: Player): Boolean = {
@@ -56,7 +53,7 @@ class GameControllerActor private(startingPlayer: Player) extends Actor {
 object GameControllerActor {
   private[GameControllerActor] val noConnectedFieldRequiredToWin = 4
 
-  case class SelectPositionAck(p: Player, pos: GridPosition, returnCode: SelectPositionReturnCode)
+  case class SelectPositionAck(p: Player, pos: GridPosition, state: Map[GridPosition, Player], returnCode: SelectPositionReturnCode)
 
   sealed trait SelectPositionReturnCode
   object SelectPositionReturnCode {
