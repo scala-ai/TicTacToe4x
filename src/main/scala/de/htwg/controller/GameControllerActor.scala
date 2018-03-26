@@ -1,18 +1,18 @@
-package de.htwg
+package de.htwg.controller
 
 import akka.actor.Actor
 import akka.actor.Props
+import de.htwg.controller.GameControllerActor.GetGrid
+import de.htwg.controller.GameControllerActor.GetGridAck
 import de.htwg.model.SelectPosition
 import de.htwg.model.Player
 import de.htwg.model.GridPosition
-import de.htwg.GameControllerActor.GetGrid
-import de.htwg.GameControllerActor.GetGridAck
-import de.htwg.GameControllerActor.SelectPositionAck
-import de.htwg.GameControllerActor.SelectPositionReturnCode.NotThisPlayersTurn
-import de.htwg.GameControllerActor.SelectPositionReturnCode.PositionAlreadySelected
-import de.htwg.GameControllerActor.SelectPositionReturnCode.PositionSet
-import de.htwg.GameControllerActor.SelectPositionReturnCode.GameAlreadyFinished
-import de.htwg.GameControllerActor.SelectPositionReturnCode.GameWon
+import de.htwg.model.SelectPositionAck
+import de.htwg.model.SelectPositionAck.SelectPositionReturnCode.NotThisPlayersTurn
+import de.htwg.model.SelectPositionAck.SelectPositionReturnCode.PositionAlreadySelected
+import de.htwg.model.SelectPositionAck.SelectPositionReturnCode.GameAlreadyFinished
+import de.htwg.model.SelectPositionAck.SelectPositionReturnCode.GameWon
+import de.htwg.model.SelectPositionAck.SelectPositionReturnCode.PositionSet
 
 class GameControllerActor private(startingPlayer: Player) extends Actor {
 
@@ -52,17 +52,6 @@ class GameControllerActor private(startingPlayer: Player) extends Actor {
 
 object GameControllerActor {
   private[GameControllerActor] val noConnectedFieldRequiredToWin = 4
-
-  case class SelectPositionAck(p: Player, pos: GridPosition, state: Map[GridPosition, Player], returnCode: SelectPositionReturnCode)
-
-  sealed trait SelectPositionReturnCode
-  object SelectPositionReturnCode {
-    case object PositionSet extends SelectPositionReturnCode
-    case object GameWon extends SelectPositionReturnCode
-    case object GameAlreadyFinished extends SelectPositionReturnCode
-    case object PositionAlreadySelected extends SelectPositionReturnCode
-    case object NotThisPlayersTurn extends SelectPositionReturnCode
-  }
 
   case object GetGrid
   case class GetGridAck(map: Map[GridPosition, Player])
