@@ -4,7 +4,7 @@ import scala.annotation.tailrec
 import scala.collection.mutable.ListBuffer
 
 case class GridPosition(x: Int, y: Int) {
-  private def inRange(i: Int) = i >= 0 && i <= 3
+  @inline private def inRange = GridPosition.inRange _
   def error(cord: Char, i: Int) = s"$cord coordinate must be between 0 and 3 (inclusive) but is: $i"
   require(inRange(x), error('X', x))
   require(inRange(y), error('Y', y))
@@ -18,6 +18,7 @@ case class GridPosition(x: Int, y: Int) {
 }
 
 object GridPosition {
+  def inRange(i: Int): Boolean = i >= 0 && i <= 3
 
   def buildCombinationsOf4(pos: GridPosition): List[List[GridPosition]] = {
     List(

@@ -1,8 +1,8 @@
 package de.htwg.model
 
-class GameField private(
-    private val current: Player,
-    private val gameField: Map[GridPosition, Player] = Map.empty,
+class GameField private[model](
+    private[model] val current: Player,
+    private[model] val gameField: Map[GridPosition, Player] = Map.empty,
     val isFinished: Boolean = false,
 ) {
 
