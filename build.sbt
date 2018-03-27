@@ -1,5 +1,5 @@
 
-name := "TicTacToe4x"
+name := "tictactoe4x"
 
 version := "0.1"
 
