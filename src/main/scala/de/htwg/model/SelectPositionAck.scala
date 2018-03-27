@@ -2,7 +2,7 @@ package de.htwg.model
 
 import de.htwg.model.SelectPositionAck.SelectPositionReturnCode
 
-case class SelectPositionAck(p: Player, pos: GridPosition, state: Map[GridPosition, Player], returnCode: SelectPositionReturnCode)
+case class SelectPositionAck(p: Player, pos: GridPosition, state: GameField, returnCode: SelectPositionReturnCode)
 
 object SelectPositionAck {
   sealed trait SelectPositionReturnCode
