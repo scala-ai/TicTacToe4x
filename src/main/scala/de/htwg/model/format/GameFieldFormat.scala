@@ -18,7 +18,7 @@ object GameFieldFormat extends OFormat[GameField] {
     val (pos, p) = pair
     Json.obj(
       posLit -> GridPositionFormat.writes(pos),
-      playerLit -> PlayerFormat.writes(p)
+      playerLit -> PlayerFormat.writes(p),
     )
   }
 
@@ -35,11 +35,13 @@ object GameFieldFormat extends OFormat[GameField] {
   private val finishedLit = "isFinished"
   private val currentPlayerLit = "currentPlayer"
   private val fieldLit = "field"
+  private val dimensions = "dimensions"
   override def writes(o: GameField): JsObject = {
     Json.obj(
       finishedLit -> o.isFinished,
       currentPlayerLit -> PlayerFormat.writes(o.current),
       fieldLit -> o.gameField.toList.map(writeGameFieldEntry),
+      dimensions -> 4,
     )
   }
 

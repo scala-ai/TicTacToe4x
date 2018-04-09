@@ -11,8 +11,8 @@ import play.api.libs.json.JsonValidationError
 
 object PlayerFormat extends Format[Player] {
 
-  private val p1Lit = "P1"
-  private val p2Lit = "P2"
+  private val p1Lit = "X"
+  private val p2Lit = "O"
   override def writes(o: Player): JsValue = {
     o match {
       case Player.One => JsString(p1Lit)
